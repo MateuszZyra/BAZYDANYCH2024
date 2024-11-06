@@ -1,0 +1,56 @@
+1. 
+create table postac(id_postaci INTEGER primary key not null auto_increment,nazwa VARCHAR(40),rodzaj ENUM('wiking','ptak','kobieta'),data_ur DATE,wiek INTEGER UNSIGNED);
+2.
+insert into postac values(Bjorn, 'wiking', '1980-12-12', '44');
+3.
+update postac set wiek = 88 where nazwa = 'Tesciowa';
+####
+####
+1.
+create table walizka(id_walizki INTEGER primary key not null auto_increment, pojemnosc INTEGER unsigned, kolor ENUM('rozowy','czerwony','teczowy','zolty'), id_wlasciciela INTEGER, FOREIGN KEY(id_wlasciciela) REFERENCES postac(id_postaci) ON DELETE CASCADE);
+2.
+alter table walizka alter kolor SET DEFAULT 'rozowy';
+3.
+insert into walizka(pojemnosc, kolor, id_wlasciciela) values('20','czerwony','1');
+insert into walizka(pojemnosc, id_wlasciciela) values('30','3');
+####
+####
+1.
+create table izba(adres_budynku VARCHAR(200),nazwa_izby VARCHAR(200),metraz INTEGER unsigned,wlasciciel INTEGER, PRIMARY KEY(adres_budynku,nazwa_izby), FOREIGN KEY(wlasciciel) REFERENCES postac(id_postaci) ON DELETE SET NULL);
+2.
+alter table izba add kolor varchar(255) default 'czarny' after metraz;
+3.
+insert into izba(adres_budynku,nazwa_izby,metraz,wlasciciel) values ('Urzednicza 17','spizarnia','13','1');
+####
+####
+1.
+create table przetwory(id_przetworu INTEGER primary key not null auto_increment, rok_produkcji INTEGER DEFAULT '1654', id_wykonawcy INTEGER, zawartosc VARCHAR(500),dodatek VARCHAR(500) default 'papryczka chilli', id_konsumenta INTEGER, FOREIGN KEY(id_wykonawcy) REFERENCES postac(id_postaci),FOREIGN KEY(id_konsumenta) REFERENCES postac(id_postaci));
+2.
+INSERT INTO przetwory(rok_produkcji,id_wykonawcy,zawartosc,id_konsumenta) VALUES('2002','1','bigos','2');
+####
+####
+1.
+INSERT INTO postac(nazwa,rodzaj,data_ur,wiek) VALUES('Roland','wiking','1975-04-16','49');+
+INSERT INTO postac(nazwa,rodzaj,data_ur,wiek) VALUES('Hagrid','wiking','1990-06-01','34');+
+INSERT INTO postac(nazwa,rodzaj,data_ur,wiek) VALUES('Waldemar','wiking','1964-09-22','60');+
+INSERT INTO postac(nazwa,rodzaj,data_ur,wiek) VALUES('Daniel','wiking','1978-09-02','46');+
+INSERT INTO postac(nazwa,rodzaj,data_ur,wiek) VALUES('Kacper','wiking','2003-02-28','21');+
+2.
+CREATE TABLE statek(nazwa_statku VARCHAR(90) PRIMARY KEY, rodzaj_statku ENUM('slup','brygantyna','galeon'), data_wodowania DATE, max_ladownosc INTEGER UNSIGNED);
+3.
+INSERT INTO statek VALUES('Szkodnik','brygantyna','1895-06-26','200');
+INSERT INTO statek VALUES('Rosomak','slup','1900-08-20','50');
+4.
+ALTER TABLE postac ADD funkcja VARCHAR(100);
+5.
+UPDATE postac SET funkcja='kapitan' WHERE id_postaci=1;
+6.
+ALTER TABLE postac ADD nazwa_statku VARCHAR(100);
+ALTER TABLE postac ADD FOREIGN KEY (nazwa_statku) REFERENCES statek(nazwa_statku);
+7.
+UPDATE postac SET nazwa_statku='Szkodnik' WHERE rodzaj='wiking';
+UPDATE postac SET nazwa_statku='Rosomak' WHERE rodzaj='ptak';
+8.
+DELETE FROM izba WHERE nazwa_izby='spizarnia';
+9.
+DROP TABLE izba;
