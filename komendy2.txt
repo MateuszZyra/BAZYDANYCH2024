@@ -1,0 +1,63 @@
+
+Zadanie 1a
+DELETE FROM postac
+WHERE rodzaj = 'wiking'
+ AND nazwa != 'Bjorn'
+ORDER BY wiek DESC
+LIMIT 2;
+Zadanie 1b
+ALTER TABLE postac DROP CONSTRAINT PRIMARY KEY;
+ALTER TABLE inne_tabela DROP CONSTRAINT FOREIGN KEY (postac_id);
+ALTER TABLE postac DROP COLUMN id;
+Zadanie 2a
+ALTER TABLE postac ADD pesel CHAR(11);
+ALTER TABLE postac DROP CONSTRAINT PRIMARY KEY;
+ALTER TABLE postac ADD PRIMARY KEY (pesel);
+Zadanie 2b
+ALTER TABLE postac MODIFY rodzaj ENUM('wiking', 'zwierze', 'syrena');
+Zadanie 2c
+INSERT INTO postac (pesel, nazwa, rodzaj, wiek)
+VALUES ('12345678901', 'Gertruda Nieszczera', 'syrena', 300);
+Zadanie 3a
+UPDATE postac
+SET statek = (SELECT id FROM statek WHERE nazwa = 'Bjorn')
+WHERE nazwa LIKE '%a%';
+Zadanie 3b
+UPDATE statek
+SET ladownosc = ladownosc * 0.7
+WHERE YEAR(data_wodowania) BETWEEN 1900 AND 1999;
+Zadanie 3c
+ALTER TABLE postac
+ADD CONSTRAINT wiek_check CHECK (wiek <= 1000);
+Zadanie 4a
+INSERT INTO postac (pesel, nazwa, rodzaj, wiek, statek)
+VALUES ('98765432101', 'Loko', 'zwierze', 100, NULL);
+Zadanie 4b
+CREATE TABLE Marynarz AS
+SELECT * FROM postac WHERE statek IS NOT NULL;
+Zadanie 4c
+DELETE FROM postac WHERE statek IS NOT NULL;
+ALTER TABLE Marynarz ADD PRIMARY KEY (pesel);
+ALTER TABLE Marynarz ADD CONSTRAINT FOREIGN KEY (statek) REFERENCES statek(id);
+Zadanie 5a
+UPDATE postac
+SET statek = NULL;
+Zadanie 5b
+DELETE FROM postac
+WHERE rodzaj = 'wiking'
+LIMIT 1;
+Zadanie 5c
+DELETE FROM statek;
+Zadanie 5d
+DROP TABLE statek;
+Zadanie 5e
+CREATE TABLE zwierz (
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ nazwa VARCHAR(255),
+ wiek INT
+);
+Zadanie 5f
+INSERT INTO zwierz (nazwa, wiek)
+SELECT nazwa, wiek
+FROM postac
+WHERE rodzaj = 'zwierze';
