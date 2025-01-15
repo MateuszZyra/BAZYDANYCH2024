@@ -1,0 +1,85 @@
+Zadanie 1
+
+1.1
+CREATE TABLE kreatura AS SELECT * FROM wikingowie.kreatura;
+CREATE TABLE uczestnicy AS SELECT * FROM wikingowie.uczestnicy;
+CREATE TABLE etapy_wyprawy AS SELECT * FROM wikingowie.etapy_wyprawy;
+CREATE TABLE sektor AS SELECT * FROM wikingowie.sektor;
+CREATE TABLE wyprawa AS SELECT * FROM wikingowie.wyprawa;
+
+1.2
+SELECT k.nazwa 
+FROM kreatura k 
+LEFT JOIN uczestnicy u ON k.idKreatury = u.idKreatury 
+WHERE u.idKreatury IS NULL;
+
+1.3
+SELECT w.nazwa AS nazwa_wyprawy, SUM(e.ilosc) AS suma_ekwipunku 
+FROM wyprawa w 
+JOIN uczestnicy u ON w.idWyprawy = u.idWyprawy 
+JOIN ekwipunek e ON u.idKreatury = e.idKreatury 
+GROUP BY w.nazwa;
+
+Zadanie 2
+
+2.1
+SELECT w.nazwa AS wyprawa, COUNT(u.idKreatury) AS liczba_uczestnikow, 
+       GROUP_CONCAT(k.nazwa) AS uczestnicy 
+FROM wyprawa w 
+JOIN uczestnicy u ON w.idWyprawy = u.idWyprawy 
+JOIN kreatura k ON u.idKreatury = k.idKreatury 
+GROUP BY w.nazwa;
+
+2.2
+SELECT w.nazwa AS wyprawa, e.kolejnosc, s.nazwa AS sektor, k.nazwa AS kierownik 
+FROM wyprawa w 
+JOIN etapy_wyprawy e ON w.idWyprawy = e.idWyprawy 
+JOIN sektor s ON e.idSektora = s.idSektora 
+JOIN kreatura k ON w.idKierownika = k.idKreatury 
+ORDER BY w.dataPoczatku, e.kolejnosc;
+
+Zadanie 3
+
+3.1
+SELECT s.nazwa AS sektor, IFNULL(COUNT(e.idSektora), 0) AS liczba_odwiedzin 
+FROM sektor s 
+LEFT JOIN etapy_wyprawy e ON s.idSektora = e.idSektora 
+GROUP BY s.nazwa;
+
+3.2
+SELECT k.nazwa, 
+       CASE 
+           WHEN COUNT(u.idWyprawy) > 0 THEN 'bral udzial w wyprawie' 
+           ELSE 'nie bral udzialu w wyprawie' 
+       END AS status 
+FROM kreatura k 
+LEFT JOIN uczestnicy u ON k.idKreatury = u.idKreatury 
+GROUP BY k.nazwa;
+
+Zadanie 4
+
+4.1
+SELECT w.nazwa AS wyprawa, SUM(LENGTH(e.dziennik)) AS suma_znakow 
+FROM wyprawa w 
+JOIN etapy_wyprawy e ON w.idWyprawy = e.idWyprawy 
+GROUP BY w.nazwa 
+HAVING SUM(LENGTH(e.dziennik)) < 400;
+
+4.2
+SELECT w.nazwa AS wyprawa, SUM(z.waga * e.ilosc) / COUNT(u.idKreatury) AS srednia_waga 
+FROM wyprawa w 
+JOIN uczestnicy u ON w.idWyprawy = u.idWyprawy 
+JOIN ekwipunek e ON u.idKreatury = e.idKreatury 
+JOIN zasob z ON e.idZasobu = z.idZasobu 
+GROUP BY w.nazwa;
+
+Zadanie 5
+
+5.1
+SELECT k.nazwa AS kreatura, DATEDIFF(w.dataPoczatku, k.dataUrodzenia) AS wiek_w_dniach 
+FROM wyprawa w 
+JOIN etapy_wyprawy e ON w.idWyprawy = e.idWyprawy 
+JOIN sektor s ON e.idSektora = s.idSektora 
+JOIN uczestnicy u ON w.idWyprawy = u.idWyprawy 
+JOIN kreatura k ON u.idKreatury = k.idKreatury 
+WHERE s.nazwa = 'chatka dziadka';
